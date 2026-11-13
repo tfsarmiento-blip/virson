@@ -1,4 +1,3 @@
-
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import * as mysql from 'mysql2/promise';
 import * as dotenv from 'dotenv';
@@ -11,25 +10,30 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     this.pool = mysql.createPool({
-      host: process.env.DB_HOST || 'mysql-3b854787-ncf-7115.d.aivencloud.com',
-      port: +(process.env.DB_PORT || 20615),
-      user: process.env.DB_USER || 'avnadmin',
-      password: process.env.DB_PASSWORD || 'UseYourAivenDBPassword',
-      database: process.env.DB_NAME || 'defaultdb',
+      host: process.env.DB_HOST || '127.0.0.1',
+      port: +(process.env.DB_PORT || 3306),
+      user: process.env.DB_USER || 'root',
+      password: process.env.DB_PASSWORD || '',
+      database: process.env.DB_NAME || 'ecommerce_db',
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
     });
 
-    // optional: test connection
-    const conn = await this.pool.getConnection();
-    await conn.ping();
-    conn.release();
-    console.log('MySQL pool created');
+    try {
+      const conn = await this.pool.getConnection();
+      await conn.ping();
+      conn.release();
+      console.log('MySQL pool created successfully connected to ' + (process.env.DB_NAME || 'ecommerce_db'));
+    } catch (err) {
+      console.error('Failed to connect to MySQL database:', err);
+    }
   }
 
   async onModuleDestroy() {
-    await this.pool.end();
+    if (this.pool) {
+      await this.pool.end();
+    }
   }
 
   getPool() {

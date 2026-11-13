@@ -1,4 +1,3 @@
-
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -7,8 +6,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  // Get all users (protected)
-  @UseGuards(JwtAuthGuard)
+  // Get all users (listed in Postman & Frontend)
   @Get()
   async getAll() {
     return this.usersService.getAll();
